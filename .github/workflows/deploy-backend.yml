@@ -3,13 +3,13 @@ name: Deploy Backend to Azure App Service
 on:
   push:
     branches:
-      - main  # Change this if deploying from a different branch
-  workflow_dispatch:  # Allows manual trigger from GitHub Actions UI
+      - main
+  workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: "mydevopsbackend"  # Replace with your Azure App Service name
-  AZURE_WEBAPP_PACKAGE_PATH: "backend"  # The folder containing backend code
-  NODE_VERSION: "18"  # Ensure this matches your Node.js version
+  AZURE_WEBAPP_NAME: "mydevopsbackend"
+  AZURE_WEBAPP_PACKAGE_PATH: "backend"
+  NODE_VERSION: "18"
 
 jobs:
   build-and-deploy:
@@ -33,9 +33,15 @@ jobs:
           cd backend
           npm test || echo "Skipping tests, no tests defined"
 
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
