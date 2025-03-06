@@ -7,8 +7,8 @@ on:
   workflow_dispatch:  # Allows manual trigger from GitHub Actions UI
 
 env:
-  AZURE_WEBAPP_NAME: "mydevopsbackend"  # Replace with your Azure App Service name
-  AZURE_WEBAPP_PACKAGE_PATH: "backend"  # The folder containing backend code
+  AZURE_WEBAPP_NAME: "mydevopsbackend"  # Your Azure App Service name
+  AZURE_WEBAPP_PACKAGE_PATH: "backend"  # Path to backend code
   NODE_VERSION: "18"  # Ensure this matches your Node.js version
 
 jobs:
@@ -34,8 +34,9 @@ jobs:
           npm test || echo "Skipping tests, no tests defined"
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          VirtualApplication: 'backend'  # Change this to match your Azure Web App virtual directory
