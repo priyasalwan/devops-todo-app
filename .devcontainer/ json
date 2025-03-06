@@ -1,0 +1,8 @@
+{
+  "name": "DevOps To-Do App",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "extensions": ["dbaeumer.vscode-eslint"]
+}
