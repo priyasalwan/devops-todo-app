@@ -1,0 +1,41 @@
+name: Auto-Tag Discussions
+
+on:
+  discussion:
+    types: [created, edited]
+
+jobs:
+  tag_discussion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-tag discussions based on keywords
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const discussion = context.payload.discussion;
+            const repo = context.repo;
+            const labels = [];
+
+            const keywordMappings = {
+              "feature": "Feature Request",
+              "enhancement": "Enhancement",
+              "bug": "Bug Report",
+              "question": "Question",
+              "help": "Help Wanted"
+            };
+
+            for (const [keyword, label] of Object.entries(keywordMappings)) {
+              if (discussion.title.toLowerCase().includes(keyword) || discussion.body.toLowerCase().includes(keyword)) {
+                labels.push(label);
+              }
+            }
+
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: repo.owner,
+                repo: repo.repo,
+                issue_number: discussion.number,
+                labels: labels
+              });
+            }
