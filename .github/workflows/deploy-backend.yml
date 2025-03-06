@@ -1,9 +1,23 @@
+name: Deploy Backend to Azure App Service
+
+on:
+  push:
+    branches:
+      - main  # ✅ Ensure this branch matches your deployment branch
+  workflow_dispatch:  # ✅ Allows manual trigger from GitHub Actions UI
+
+env:
+  AZURE_WEBAPP_NAME: "mydevopsbackend"  # ✅ Replace with your App Service name
+  AZURE_WEBAPP_PACKAGE_PATH: "backend"  # ✅ Folder containing backend code
+  NODE_VERSION: "18"  # ✅ Ensure this matches your Node.js version
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write  # ✅ This is required for federated authentication
+      id-token: write  # ✅ Required for federated authentication
       contents: read   # ✅ Required for actions/checkout
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,7 +32,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
         run: |
